@@ -1,5 +1,5 @@
 -- MySQL Workbench Synchronization
--- Generated: 2020-11-25 22:08
+-- Generated: 2020-11-26 17:59
 -- Model: New Model
 -- Version: 1.0
 -- Project: Name of the project
@@ -94,14 +94,16 @@ CREATE TABLE IF NOT EXISTS `maxikiosco`.`EMPLEADO` (
   PRIMARY KEY (`DNI`),
   UNIQUE INDEX `DNI_UNIQUE` (`DNI` ASC),
   UNIQUE INDEX `CUIL_UNIQUE` (`CUIL` ASC),
-  UNIQUE INDEX `Telefono_UNIQUE` (`Telefono` ASC))
+  UNIQUE INDEX `Telefono_UNIQUE` (`Telefono` ASC),
+  UNIQUE INDEX `Legajo_UNIQUE` (`Legajo` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `maxikiosco`.`LOTE` (
   `CodigoArt` INT(11) NOT NULL,
-  `Lote` INT(11) NOT NULL AUTO_INCREMENT,
+  `Lote` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `FechaVencimiento` DATE NOT NULL,
+  `StockLote` INT(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`CodigoArt`),
   UNIQUE INDEX `Lote_UNIQUE` (`Lote` ASC),
   CONSTRAINT `fk_table1_ARTICULO`
@@ -207,6 +209,7 @@ CREATE TABLE IF NOT EXISTS `maxikiosco`.`USUARIO` (
   PRIMARY KEY (`IdUser`),
   UNIQUE INDEX `idUSUARIO_UNIQUE` (`IdUser` ASC),
   INDEX `fk_USUARIO_EMPLEADO1_idx` (`DNI` ASC),
+  UNIQUE INDEX `DNI_UNIQUE` (`DNI` ASC),
   CONSTRAINT `fk_USUARIO_EMPLEADO1`
     FOREIGN KEY (`DNI`)
     REFERENCES `maxikiosco`.`EMPLEADO` (`DNI`)
@@ -236,7 +239,7 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `maxikiosco`.`TURNO` (
   `USUARIO` INT(11) NOT NULL,
-  `Horario` CHAR NOT NULL,
+  `Horario` TIME NOT NULL,
   `Fecha` DATE NOT NULL,
   `Asistencia` TINYINT(4) NOT NULL,
   PRIMARY KEY (`USUARIO`),

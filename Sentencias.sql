@@ -23,16 +23,15 @@ IN Localidad VARCHAR(45), IN Calle VARCHAR(45), IN Numero INT, IN Piso INT, IN D
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE `insertarProveedor` (IN DNI VARCHAR(8), IN Apellido VARCHAR (45), IN Nombre VARCHAR(45),
-IN CUIL VARCHAR(11), IN Mail VARCHAR(60), IN Telefono VARCHAR(15), IN CodPostal INT, IN Provincia VARCHAR(45),
-IN Localidad VARCHAR(45), IN Calle VARCHAR(45), IN Numero INT, IN Piso INT, IN Dpto INT)
+CREATE PROCEDURE `insertarProveedor` (IN CUIT VARCHAR(15), IN rsocial VARCHAR(45), IN tipo VARCHAR(50), IN telefono VARCHAR(15), IN Mail VARCHAR(60), IN Provincia VARCHAR(45),
+									  IN Localidad VARCHAR(45), IN Calle VARCHAR(45), IN Numero INT)
     BEGIN
 		CALL insertarCtaCte('proveedor');
         SELECT @cta:= last_insert_id();
         
-        INSERT INTO cliente
-        VALUES (DNI, Apellido, Nombre, CUIL, Mail, Telefono,
-        CodPostal, Provincia, Localidad, Calle, Numero, Piso, Dpto, @cta);
+        INSERT INTO PROVEEDOR
+        VALUES (CUIT, rsocial, tipo, telefono, Mail, Provincia,
+        Localidad, Calle, Numero, @cta);
     END //
 DELIMITER ;
 
@@ -51,7 +50,7 @@ CREATE PROCEDURE `insertarEmpleado`(IN DNI VARCHAR(8), IN apellido VARCHAR(45), 
                                     IN nroCalle INT, IN Dpto INT, IN piso INT)
 	BEGIN
 		INSERT INTO empleado
-		VALUES (DNI, null, apellido, nombre, CUIL, mail, telefono, rol,
+		VALUES (DNI, NULL, apellido, nombre, CUIL, mail, telefono, rol,
 		obraSocial, sueldo, fechaIng, localidad, calle, nroCalle, Dpto, piso);
 	END // 
 DELIMITER ;
@@ -65,7 +64,7 @@ CREATE PROCEDURE `insertarTurno`(IN idUser INT)
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE `insertarArticulo`(IN nombre VARCHAR(45), IN  marca VARCHAR(45), IN precio FLOAT, IN iva FLOAT,
+CREATE PROCEDURE `insertarArticulo`(IN nombre VARCHAR(45), IN  marca VARCHAR(45), IN iva FLOAT, IN precio FLOAT,
 									IN stock INT, IN stockmin INT, IN descrip VARCHAR(200))
 	BEGIN
 		INSERT INTO ARTICULO
@@ -90,18 +89,18 @@ CREATE PROCEDURE `insertarTiene`(IN codArt INT, IN idRubro INT)
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE `insertarLote`(IN codArt INT, IN vencimiento DATE)
+CREATE PROCEDURE `insertarLote`(IN codArt INT, IN vencimiento DATE, IN stock INT)
 	BEGIN
 		INSERT INTO LOTE
-		VALUES (codArt, null, fechaVencimiento);
+		VALUES (codArt, null, vencimiento, stock);
 	END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE `insertarCompra`(IN totalC FLOAT, IN remito VARCHAR(45), IN cuenta INT)
+CREATE PROCEDURE `insertarCompra`(IN totalC FLOAT, IN remito VARCHAR(45), IN fecha DATE, IN cuenta INT)
 	BEGIN
 		INSERT INTO COMPRA
-		VALUES (null, totalC, remito, current_date(), cuenta);
+		VALUES (null, totalC, remito, fecha, cuenta);
 	END //
 DELIMITER ;
 
