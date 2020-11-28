@@ -1,5 +1,6 @@
 USE maxikiosco;
 
+/***********************SP DE INSERCIÓN***********************/
 DELIMITER //
 CREATE PROCEDURE `insertarCtaCte` (IN tipo VARCHAR(9))
 BEGIN
@@ -59,16 +60,16 @@ DELIMITER //
 CREATE PROCEDURE `insertarTurno`(IN idUser INT)
 	BEGIN
 		INSERT INTO TURNO
-		VALUES (idUser, current_time(), current_date(), true);
+		VALUES (idUser, current_time(), current_date(), null);
 	END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE `insertarArticulo`(IN nombre VARCHAR(45), IN  marca VARCHAR(45), IN iva FLOAT, IN precio FLOAT,
+CREATE PROCEDURE `insertarArticulo`(IN nombre VARCHAR(45), IN  marca VARCHAR(45), IN costo FLOAT, IN iva FLOAT, IN precio FLOAT,
 									IN stock INT, IN stockmin INT, IN descrip VARCHAR(200))
 	BEGIN
 		INSERT INTO ARTICULO
-		VALUES (null, nombre, marca, iva, precio, stock, stockmin, descrip);
+		VALUES (null, nombre, marca, costo, iva, precio, stock, stockmin, descrip);
 	END //
 DELIMITER ;
 
@@ -89,10 +90,10 @@ CREATE PROCEDURE `insertarTiene`(IN codArt INT, IN idRubro INT)
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE `insertarLote`(IN codArt INT, IN vencimiento DATE, IN stock INT)
+CREATE PROCEDURE `insertarLote`(IN codArt INT,IN fllegada DATE,IN vencimiento DATE, IN stock INT)
 	BEGIN
 		INSERT INTO LOTE
-		VALUES (codArt, null, vencimiento, stock);
+		VALUES (null, codArt, fllegada, vencimiento, stock);
 	END //
 DELIMITER ;
 
@@ -121,10 +122,10 @@ CREATE PROCEDURE `insertarVenta`(IN total FLOAT)
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE `insertarArtVendido`(IN nroRecibo INT, IN codArt INT, IN cantidad INT, IN monto FLOAT)
+CREATE PROCEDURE `insertarArtVendido`(IN nroRecibo INT, IN codArt INT, IN cantidad INT)
 	BEGIN
 		INSERT INTO ART_VENDIDO
-		VALUES (nroRecibo, codArt, cantidad, monto);
+		VALUES (nroRecibo, codArt, cantidad, null);
 	END //
 DELIMITER ;
 
@@ -133,5 +134,18 @@ CREATE PROCEDURE `insertarLleva`(IN nroCuenta INT, IN nroRecibo INT)
 	BEGIN
 		INSERT INTO LLEVA
 		VALUES (nroCuenta, nroRecibo);
+	END //
+DELIMITER ;
+
+/***********************SP DE CONSULTAS OBLIGATORIAS***********************/
+DELIMITER //
+#no sabia que tan proximo deberia ser el vencimiento, así que todos los que estan a 1 mes de distancia
+CREATE PROCEDURE `vencimiento_proximo_a`(IN fecha DATE)
+	BEGIN
+		SELECT *
+		FROM ARTICULO JOIN LOTE USING(CodigoArt)
+		WHERE fechaVencimiento 
+		BETWEEN date_add(fecha, INTERVAL -1 MONTH) AND date_add(fecha, INTERVAL 1 MONTH)
+		ORDER BY fechaVencimiento ASC;
 	END //
 DELIMITER ;

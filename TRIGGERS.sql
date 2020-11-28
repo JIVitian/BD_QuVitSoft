@@ -4,29 +4,61 @@ DELIMITER //
 CREATE TRIGGER `insercionEmpleado`
 BEFORE INSERT ON EMPLEADO
 FOR EACH ROW
-BEGIN
-	SET @antLegajo := (SELECT MAX(legajo) FROM EMPLEADO);
-    
-	IF isnull(NEW.legajo) AND isnull(@antLegajo)
-    THEN
-		SET NEW.legajo = 1;
-	ELSEIF isnull(NEW.legajo) AND NOT isnull(@antLegajo)
-    THEN
-		SET NEW.legajo = (@antLegajo) + 1;
-	END IF ;
-END //
+	BEGIN
+		SET @antLegajo := (SELECT MAX(legajo) FROM EMPLEADO);
+		
+		IF isnull(NEW.legajo) AND isnull(@antLegajo)
+		THEN
+			SET NEW.legajo = 1;
+		ELSEIF isnull(NEW.legajo) AND NOT isnull(@antLegajo)
+		THEN
+			SET NEW.legajo = (@antLegajo) + 1;
+		END IF ;
+	END //
 DELIMITER ;
 
 DELIMITER //
-CREATE TRIGGER `insercionEmpleado`
-BEFORE INSERT ON EMPLEADO
+CREATE TRIGGER `venta_articulo`
+BEFORE INSERT ON ART_VENDIDO
 FOR EACH ROW
-BEGIN
-	IF isnull(NEW.legajo) AND isnull(SELECT MAX(legajo) FROM EMPLEADO)
-    THEN
-		SET NEW.legajo = 1;
-	ELSE
-		SET NEW.legajo = (SELECT MAX(legajo) FROM EMPLEADO) OR NEW.legajo = 1;
-	END IF ;
-END$$ 
+	BEGIN
+		SELECT precio INTO @precio
+		FROM ARTICULO
+		WHERE codigoArt = NEW.codigoArt;
+        SELECT stockActual INTO @stock 
+        FROM ARTICULO 
+        WHERE codigoArt = NEW.codigoArt;
+        
+        IF (NEW.cantidad > @stock)
+        THEN
+			SET NEW.cantidad = @stock;
+		END IF;
+        
+        UPDATE ARTICULO
+        SET stockActual = (@stock - NEW.cantidad)
+        WHERE codigoArt = NEW.codigoArt;
+        
+		SET NEW.monto = (NEW.cantidad * @precio);
+        
+        UPDATE VENTA
+        SET total = (total + NEW.monto)
+        WHERE nroRecibo = NEW.nroRecibo;
+	END // 
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER `producto_ingresa`
+BEFORE INSERT ON INGRESA
+FOR EACH ROW
+	BEGIN
+		SELECT stockActual INTO @stock
+		FROM ARTICULO
+		WHERE codigoArt = NEW.codigoArt;
+
+		UPDATE ARTICULO
+		SET stockActual = (@stock + NEW.cantidad),
+			costo = (NEW.costo / NEW.cantidad),
+			IVA = (NEW.costo / NEW.cantidad)*0.21
+		WHERE codigoArt = NEW.codigoArt;
+	END //
 DELIMITER ;

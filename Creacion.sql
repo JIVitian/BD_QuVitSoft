@@ -1,5 +1,5 @@
 -- MySQL Workbench Synchronization
--- Generated: 2020-11-26 17:59
+-- Generated: 2020-11-27 20:05
 -- Model: New Model
 -- Version: 1.0
 -- Project: Name of the project
@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS `maxikiosco`.`ARTICULO` (
   `CodigoArt` INT(11) NOT NULL AUTO_INCREMENT,
   `Nombre` VARCHAR(45) NOT NULL,
   `Marca` VARCHAR(45) NOT NULL,
+  `Costo` FLOAT(11) NOT NULL,
   `IVA` FLOAT(11) NOT NULL,
   `Precio` FLOAT(11) NOT NULL,
   `StockActual` INT(11) NULL DEFAULT NULL,
@@ -100,11 +101,12 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `maxikiosco`.`LOTE` (
+  `Lote` INT(11) NOT NULL AUTO_INCREMENT,
   `CodigoArt` INT(11) NOT NULL,
-  `Lote` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `FechaIngreso` DATE NOT NULL,
   `FechaVencimiento` DATE NOT NULL,
   `StockLote` INT(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`CodigoArt`),
+  PRIMARY KEY (`Lote`, `CodigoArt`),
   UNIQUE INDEX `Lote_UNIQUE` (`Lote` ASC),
   CONSTRAINT `fk_table1_ARTICULO`
     FOREIGN KEY (`CodigoArt`)
@@ -239,10 +241,10 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `maxikiosco`.`TURNO` (
   `USUARIO` INT(11) NOT NULL,
-  `Horario` TIME NOT NULL,
+  `HoraInicio` TIME NOT NULL,
   `Fecha` DATE NOT NULL,
-  `Asistencia` TINYINT(4) NOT NULL,
-  PRIMARY KEY (`USUARIO`),
+  `HoraFin` TIME NULL DEFAULT NULL,
+  PRIMARY KEY (`USUARIO`, `HoraInicio`, `Fecha`),
   CONSTRAINT `fk_TURNO_USUARIO1`
     FOREIGN KEY (`USUARIO`)
     REFERENCES `maxikiosco`.`USUARIO` (`IdUser`)
