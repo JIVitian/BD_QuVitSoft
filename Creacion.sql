@@ -1,5 +1,5 @@
 -- MySQL Workbench Synchronization
--- Generated: 2020-11-27 20:05
+-- Generated: 2020-11-29 11:51
 -- Model: New Model
 -- Version: 1.0
 -- Project: Name of the project
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `maxikiosco`.`ARTICULO` (
   `Precio` FLOAT(11) NOT NULL,
   `StockActual` INT(11) NULL DEFAULT NULL,
   `StockMinimo` INT(11) NULL DEFAULT NULL,
-  `Descripción` VARCHAR(250) NULL DEFAULT NULL,
+  `Descripcion` VARCHAR(250) NULL DEFAULT NULL,
   PRIMARY KEY (`CodigoArt`),
   UNIQUE INDEX `CodigoArt_UNIQUE` (`CodigoArt` ASC))
 ENGINE = InnoDB
@@ -55,7 +55,7 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `maxikiosco`.`PROVEEDOR` (
   `CUIL/CUIT` VARCHAR(15) NOT NULL,
-  `RazónSocial` VARCHAR(45) NOT NULL,
+  `RazonSocial` VARCHAR(45) NOT NULL,
   `Tipo` VARCHAR(50) NOT NULL,
   `Telefono` VARCHAR(15) NULL DEFAULT NULL,
   `Mail` VARCHAR(60) NULL DEFAULT NULL,
@@ -105,7 +105,6 @@ CREATE TABLE IF NOT EXISTS `maxikiosco`.`LOTE` (
   `CodigoArt` INT(11) NOT NULL,
   `FechaIngreso` DATE NOT NULL,
   `FechaVencimiento` DATE NOT NULL,
-  `StockLote` INT(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`Lote`, `CodigoArt`),
   UNIQUE INDEX `Lote_UNIQUE` (`Lote` ASC),
   CONSTRAINT `fk_table1_ARTICULO`

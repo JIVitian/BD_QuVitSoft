@@ -90,10 +90,10 @@ CREATE PROCEDURE `insertarTiene`(IN codArt INT, IN idRubro INT)
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE `insertarLote`(IN codArt INT,IN fllegada DATE,IN vencimiento DATE, IN stock INT)
+CREATE PROCEDURE `insertarLote`(IN codArt INT,IN fllegada DATE,IN vencimiento DATE)
 	BEGIN
 		INSERT INTO LOTE
-		VALUES (null, codArt, fllegada, vencimiento, stock);
+		VALUES (null, codArt, fllegada, vencimiento);
 	END //
 DELIMITER ;
 
@@ -110,6 +110,14 @@ CREATE PROCEDURE `insertarIngresa`(IN codArt INT, IN idCompra INT, IN cantidad I
 	BEGIN
 		INSERT INTO INGRESA
 		VALUES (codArt, idCompra, cantidad, costo);
+        /*
+        SELECT fecha INTO @ingreso
+        FROM COMPRA INNER JOIN INGRESA USING(ID)
+        WHERE ID = idCompra;
+        
+        
+        CALL insertarLote(codArt, ingreso, vencimiento, stock);
+        */
 	END //
 DELIMITER ;
 
@@ -134,18 +142,5 @@ CREATE PROCEDURE `insertarLleva`(IN nroCuenta INT, IN nroRecibo INT)
 	BEGIN
 		INSERT INTO LLEVA
 		VALUES (nroCuenta, nroRecibo);
-	END //
-DELIMITER ;
-
-/***********************SP DE CONSULTAS OBLIGATORIAS***********************/
-DELIMITER //
-#no sabia que tan proximo deberia ser el vencimiento, así que todos los que estan a 1 mes de distancia
-CREATE PROCEDURE `vencimiento_proximo_a`(IN fecha DATE)
-	BEGIN
-		SELECT *
-		FROM ARTICULO JOIN LOTE USING(CodigoArt)
-		WHERE fechaVencimiento 
-		BETWEEN date_add(fecha, INTERVAL -1 MONTH) AND date_add(fecha, INTERVAL 1 MONTH)
-		ORDER BY fechaVencimiento ASC;
 	END //
 DELIMITER ;
