@@ -62,3 +62,17 @@ FOR EACH ROW
 		WHERE codigoArt = NEW.codigoArt;
 	END //
 DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER `borrado_articulo`
+BEFORE DELETE ON ARTICULO
+FOR EACH ROW 
+	BEGIN
+		INSERT INTO ARTICULO_HISTORIAL
+        SELECT * FROM ARTICULO;
+        
+        UPDATE ARTICULO_HISTORIAL
+        SET fecha = CURDATE(), hora = CURTIME(), operacion = 'Borrado', usuario = USER()
+		WHERE NroModificación = last_insert_id();
+	END //
+DELIMITER ;

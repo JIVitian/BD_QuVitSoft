@@ -101,4 +101,5 @@ CALL insertarArtVendido(6, 2, 10);
 CALL insertarArtVendido(4, 2, 2);
 #INSERT INTO ART_VENDIDO VALUES (8,2, 10,NULL),(9,2, 10,NULL),(10,2, 10,NULL),(11,2, 10,NULL),(12,2, 10,NULL);
 
-
+SELECT system_user();
+SELECT log(VENTA);

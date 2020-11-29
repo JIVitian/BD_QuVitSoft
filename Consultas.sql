@@ -56,6 +56,5 @@ ORDER BY sum(ART_VENDIDO.cantidad) DESC;
 
 /*CONSULTA N°4*/
 
-
 /*CONSULTA N°5*/
-
+# Recuperación de datos de la tabla de historial de articulo.

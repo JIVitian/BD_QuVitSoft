@@ -1,5 +1,5 @@
 -- MySQL Workbench Synchronization
--- Generated: 2020-11-29 11:51
+-- Generated: 2020-11-29 18:30
 -- Model: New Model
 -- Version: 1.0
 -- Project: Name of the project
@@ -282,6 +282,31 @@ CREATE TABLE IF NOT EXISTS `maxikiosco`.`ART_VENDIDO` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_VENTA_has_ARTICULO_ARTICULO1`
+    FOREIGN KEY (`CodigoArt`)
+    REFERENCES `maxikiosco`.`ARTICULO` (`CodigoArt`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `maxikiosco`.`ARTICULO_HISTORIAL` (
+  `NroBorrado` INT(11) NOT NULL AUTO_INCREMENT,
+  `CodigoArt` INT(11) NOT NULL,
+  `Nombre` VARCHAR(45) NOT NULL,
+  `Marca` VARCHAR(45) NOT NULL,
+  `Costo` FLOAT(11) NOT NULL,
+  `IVA` FLOAT(11) NOT NULL,
+  `Precio` FLOAT(11) NOT NULL,
+  `StockActual` INT(11) NULL DEFAULT NULL,
+  `StockMinimo` INT(11) NULL DEFAULT NULL,
+  `Descripcion` VARCHAR(250) NULL DEFAULT NULL,
+  `Operacion` VARCHAR(15) NULL DEFAULT NULL,
+  `Fecha` DATE NULL DEFAULT NULL,
+  `Hora` TIME NULL DEFAULT NULL,
+  `Usuario` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`NroBorrado`),
+  INDEX `fk_ARTICULO_HISTORIAL_ARTICULO1_idx` (`CodigoArt` ASC),
+  CONSTRAINT `fk_ARTICULO_HISTORIAL_ARTICULO1`
     FOREIGN KEY (`CodigoArt`)
     REFERENCES `maxikiosco`.`ARTICULO` (`CodigoArt`)
     ON DELETE NO ACTION
