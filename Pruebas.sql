@@ -77,10 +77,6 @@ CALL insertarIngresa(1,2, 200, 2000);
 UPDATE ARTICULO
 SET precio = 15;
 
-/*CONSULTA OBLIGARTORIA N°1*/
-CALL vencimiento_proximo_a (current_date());
-
-
 INSERT INTO VENTA VALUE (NULL, '2020-10-16', curtime(), 2193);
 INSERT INTO VENTA VALUE (NULL, '2020-10-31', curtime(), 2393);
 INSERT INTO VENTA VALUE (NULL, '2020-10-24', curtime(), 1113);
@@ -102,4 +98,5 @@ CALL insertarArtVendido(4, 2, 2);
 #INSERT INTO ART_VENDIDO VALUES (8,2, 10,NULL),(9,2, 10,NULL),(10,2, 10,NULL),(11,2, 10,NULL),(12,2, 10,NULL);
 
 SELECT system_user();
-SELECT log(VENTA);
+
+DELETE FROM ARTICULO WHERE codigoArt = 5;
