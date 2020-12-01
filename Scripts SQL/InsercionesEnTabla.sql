@@ -1,3 +1,9 @@
+-- TFI: Maxikiosko
+-- Grupo: QuVitSoft
+-- Integrantes:
+-- - Quevedo, Franco
+-- - Vitian, Jorge Ivan
+
 USE maxikiosco;
 
 /***********************SP DE INSERCIÓN***********************/
@@ -22,7 +28,6 @@ IN Localidad VARCHAR(45), IN Calle VARCHAR(45), IN Numero INT, IN Piso INT, IN D
         CodPostal, Provincia, Localidad, Calle, Numero, Dpto, Piso, @cta);
     END //
 DELIMITER ;
-
 
 DELIMITER //
 CREATE PROCEDURE `insertarProveedor` (IN CUIT VARCHAR(15), IN rsocial VARCHAR(45), IN tipo VARCHAR(50), IN telefono VARCHAR(15), IN Mail VARCHAR(60), IN Provincia VARCHAR(45),
@@ -110,14 +115,6 @@ CREATE PROCEDURE `insertarIngresa`(IN codArt INT, IN idCompra INT, IN cantidad I
 	BEGIN
 		INSERT INTO INGRESA
 		VALUES (codArt, idCompra, cantidad, costo);
-        /*
-        SELECT fecha INTO @ingreso
-        FROM COMPRA INNER JOIN INGRESA USING(ID)
-        WHERE ID = idCompra;
-        
-        
-        CALL insertarLote(codArt, ingreso, vencimiento, stock);
-        */
 	END //
 DELIMITER ;
 

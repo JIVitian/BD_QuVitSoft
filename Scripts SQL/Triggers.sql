@@ -1,12 +1,19 @@
+-- TFI: Maxikiosko
+-- Grupo: QuVitSoft
+-- Integrantes:
+-- - Quevedo, Franco
+-- - Vitian, Jorge Ivan
+
 USE maxikiosco;
 
+/* N°1 */
+/* Listar las mercaderías con fecha de vencimiento próximas a diciembre */
 DELIMITER //
 CREATE TRIGGER `insercionEmpleado`
 BEFORE INSERT ON EMPLEADO
 FOR EACH ROW
 	BEGIN
 		SET @antLegajo := (SELECT MAX(legajo) FROM EMPLEADO);
-		
 		IF isnull(NEW.legajo) AND isnull(@antLegajo)
 		THEN
 			SET NEW.legajo = 1;
@@ -17,6 +24,8 @@ FOR EACH ROW
 	END //
 DELIMITER ;
 
+/* N°2 */
+/* Listar las mercaderías con fecha de vencimiento próximas a diciembre */
 DELIMITER //
 CREATE TRIGGER `venta_articulo`
 BEFORE INSERT ON ART_VENDIDO
@@ -25,8 +34,7 @@ FOR EACH ROW
 		SELECT precio INTO @precio
 		FROM ARTICULO
 		WHERE codigoArt = NEW.codigoArt;
-        SELECT stockActual INTO @stock 
-        FROM ARTICULO 
+        SELECT stockActual INTO @stock FROM ARTICULO 
         WHERE codigoArt = NEW.codigoArt;
         
 		SET NEW.monto = (NEW.cantidad * @precio);
@@ -47,6 +55,8 @@ FOR EACH ROW
 	END //
 DELIMITER ;
 
+/* N°3 */
+/* Listar las mercaderías con fecha de vencimiento próximas a diciembre */
 DELIMITER //
 CREATE TRIGGER `insercionLleva`
 AFTER INSERT ON LLEVA
@@ -64,6 +74,8 @@ DELIMITER ;
 
 # DROP TRIGGER insercionLleva;
 
+/* N°4 */
+/* Listar las mercaderías con fecha de vencimiento próximas a diciembre */
 DELIMITER //
 CREATE TRIGGER `producto_ingresa`
 BEFORE INSERT ON INGRESA
@@ -97,6 +109,8 @@ DELIMITER ;
 
 #DROP TRIGGER producto_ingresa;
 
+/* N°5 */
+/* Listar las mercaderías con fecha de vencimiento próximas a diciembre */
 DELIMITER //
 CREATE TRIGGER `borrado_articulo`
 BEFORE DELETE ON ARTICULO

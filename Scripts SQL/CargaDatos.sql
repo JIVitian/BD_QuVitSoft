@@ -1,3 +1,9 @@
+-- TFI: Maxikiosko
+-- Grupo: QuVitSoft
+-- Integrantes:
+-- - Quevedo, Franco
+-- - Vitian, Jorge Ivan
+
 USE maxikiosco;
 
 CALL insertarEmpleado('31921863', 'Ramirez', 'Yoel', '21319218636', 'ramyoel@hotmail.com.ar', '+549381846231', 'Gerente',
@@ -137,72 +143,3 @@ INSERT INTO REALIZA VALUE (3,2);
 INSERT INTO REALIZA VALUE (4,2);
 INSERT INTO REALIZA VALUE (5,3);
 INSERT INTO REALIZA VALUE (6,3);
-
-
-/*
-# Empiezo a probar los triggers que voy haciendo.
-
-INSERT INTO ART_VENDIDO VALUES (1,2, 10, null);
-
-CALL insertarVenta(100);
-
-INSERT INTO ART_VENDIDO VALUES (2, 1, 15, null);
-
-CALL insertarVenta(0);
-
-INSERT INTO ART_VENDIDO VALUES (3, 2, 15, null);
-
-INSERT INTO ART_VENDIDO VALUES (3, 1, 15, null);
-
-/******************PRUEBAS PARA EL TRIGGER DE INGRESA*********************
-
-CALL insertarIngresa(2,1, 20, 200);
-
-CALL insertarCompra(2000, 'Chupetin x 200', current_date(), 3);
-
-CALL insertarIngresa(2,2, 100, 1000);
-CALL insertarIngresa(1,2, 200, 2000);
-
-# Todaía no se como sería mejor manejar los precios de los articulos
-# si debería asignarlos automaticamente en 0 o algún valor calculado en 
-# función del costo y el IVA hasta que el usuario decida cambiarlos
-# O simplemente debería ingresar el precio, suponiendo que ya lo tenga
-# pensado, junto con el registro del propio Articulo.
-UPDATE ARTICULO
-SET precio = 15;
-
-INSERT INTO VENTA VALUE (NULL, '2020-10-16', curtime(), 2193);
-INSERT INTO VENTA VALUE (NULL, '2020-10-31', curtime(), 2393);
-INSERT INTO VENTA VALUE (NULL, '2020-10-24', curtime(), 1113);
-INSERT INTO VENTA VALUE (NULL, '2020-10-24', curtime(), 5231);
-
-CALL insertarRubro('Bebida Energetica', 'Bebida Energetica');
-CALL insertarTiene(3,2);
-
-INSERT INTO LLEVA VALUES (1,2),(1,3),(1,4);
-INSERT INTO LLEVA VALUE (2,5);
-
-INSERT INTO VENTA VALUE (NULL, '2020-10-24', curtime(), 5231);
-INSERT INTO VENTA VALUE (NULL, '2020-10-24', curtime(), 5231);
-INSERT INTO VENTA VALUE (NULL, '2020-10-24', curtime(), 5231);
-CALL insertarArtVendido(4, 1, 10);
-CALL insertarArtVendido(5, 2, 10);
-CALL insertarArtVendido(6, 2, 10);
-CALL insertarArtVendido(4, 2, 2);
-#INSERT INTO ART_VENDIDO VALUES (8,2, 10,NULL),(9,2, 10,NULL),(10,2, 10,NULL),(11,2, 10,NULL),(12,2, 10,NULL);
-
-SELECT system_user();
-
-DELETE FROM ARTICULO WHERE codigoArt = 5;
-
-CALL insertarCompra(0, '', CURDATE(), 3);
-CALL insertarIngresa(3, 4, 100, 9500);
-UPDATE ARTICULO SET precio = 110 WHERE codigoArt = 4;
-
-CALL insertarLleva(1,5);
-CALL insertarLleva(1,6);
-CALL insertarLleva(1,7);
-
-SELECT stockActual, CONCAT(nombre, '\n', marca) INTO @stock, @producto
-FROM ARTICULO
-WHERE codigoArt = 2;

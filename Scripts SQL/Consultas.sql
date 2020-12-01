@@ -1,5 +1,17 @@
-/*CONSULTA OBLIGARTORIA N°1*/
--- Listar las mercaderías con fecha de vencimiento próximas a diciembre.
+-- TFI: Maxikiosko
+-- Grupo: QuVitSoft
+-- Integrantes:
+-- - Quevedo, Franco
+-- - Vitian, Jorge Ivan
+
+USE maxikiosco;
+
+/*********************************************************************************/
+/***************************** CONSULTAS OBLIGATORIAS ****************************/
+/*********************************************************************************/
+
+/* N°1 */
+/* Listar las mercaderías con fecha de vencimiento próximas a diciembre */
 DELIMITER //
 CREATE PROCEDURE `vencimiento_proximo_a`(IN fecha DATE)
 	BEGIN
@@ -7,21 +19,20 @@ CREATE PROCEDURE `vencimiento_proximo_a`(IN fecha DATE)
 			   LOTE.FechaIngreso AS 'Ingreso', LOTE.FECHAVENCIMIENTO AS 'Vencimiento'
 		FROM ARTICULO JOIN LOTE USING(CodigoArt)
 		WHERE fechaVencimiento 
-		BETWEEN date_add(fecha, INTERVAL -1 MONTH) AND date_add(fecha, INTERVAL 1 MONTH)
+		BETWEEN date_add(fecha, INTERVAL -14 DAY) AND date_add(fecha, INTERVAL 14 DAY)
 		ORDER BY fechaVencimiento ASC;
 	END //
 DELIMITER ;
 
 CALL vencimiento_proximo_a (current_date());
 
-/*CONSULTA OBLIGARTORIA N°2*/
--- Listar las ventas realizadas en la última quincena de octubre.
-SELECT *
-FROM VENTA
+/* N°2 */
+/* Listar las ventas realizadas en la última quincena de octubre */
+SELECT * FROM VENTA
 WHERE fecha BETWEEN '2020-10-15' AND '2020-10-31';
 
-/*CONSULTA OBLIGARTORIA N°3*/
--- Listar los proveedores de bebidas energéticas.
+/* N°3 */
+/* Listar los proveedores de bebidas energéticas */
 SELECT PROVEEDOR.razonSocial, ARTICULO.nombre, ARTICULO.marca
 FROM PROVEEDOR INNER JOIN (CUENTA_CORRIENTE INNER JOIN 
 	(COMPRA INNER JOIN 
@@ -32,16 +43,16 @@ WHERE ARTICULO.Descripcion LIKE '%Bebida Energetica%'
 GROUP BY ARTICULO.Marca
 ORDER BY PROVEEDOR.RazonSocial;
 
-/*CONSULTA OBLIGARTORIA N°4*/
--- Listar los clientes que poseen cuenta corriente ordenándolos de mayor a menor monto total de compras realizadas en el mes de octubre.
+/* N°4 */
+/* Listar los clientes que poseen cuenta corriente ordenándolos de mayor a menor monto total de compras realizadas en el mes de octubre */
 SELECT CLIENTE.APELLIDO, CLIENTE.NOMBRE, CLIENTE.DNI, CUENTA_CORRIENTE.NROCUENTA, CUENTA_CORRIENTE.SALDO, count(LLEVA.NroCuenta) AS 'N° Compras', SUM(VENTA.TOTAL) AS 'Monto Total'
 FROM CLIENTE INNER JOIN (CUENTA_CORRIENTE INNER JOIN (LLEVA INNER JOIN VENTA USING(NroRecibo)) USING(NROCUENTA)) USING(NROCUENTA)
 WHERE VENTA.Fecha BETWEEN '2020-10-01' AND '2020-10-31' 
 GROUP BY LLEVA.NROCUENTA
 ORDER BY SUM(VENTA.TOTAL) DESC;
 
-/*CONSULTA OBLIGARTORIA N°5*/
--- Listar los productos más vendidos en el mes de octubre de mayor a menor cantidad de ventas.
+/* N°5 */
+/* Listar los productos más vendidos en el mes de octubre de mayor a menor cantidad de ventas */
 SELECT ARTICULO.codigoArt, ARTICULO.Nombre, ARTICULO.marca, ARTICULO.precio, sum(ART_VENDIDO.cantidad) AS Ventas
 FROM ARTICULO INNER JOIN
 	(ART_VENDIDO INNER JOIN VENTA USING(NroRecibo)) USING(codigoArt)
@@ -49,18 +60,32 @@ WHERE VENTA.Fecha BETWEEN '2020-10-01' AND '2020-10-31'
 GROUP BY ART_VENDIDO.codigoArt
 ORDER BY sum(ART_VENDIDO.cantidad) DESC LIMIT 10;
 
-/*********************CONSULTAS ADICIONALES*********************/
-/*CONSULTA N°1*/
 
+/*********************************************************************************/
+/***************************** CONSULTAS ADICIONALES *****************************/
+/*********************************************************************************/
 
-/*CONSULTA N°2*/
+/* N°1 */
+/* Obtiene los datos que irán en el recibo de la venta */
+DELIMITER //
+CREATE PROCEDURE `reciboVenta` (IN recibo INT)
+	BEGIN
+		SELECT VENTA.NroRecibo, VENTA.Fecha, VENTA.Hora,
+            ARTICULO.Nombre, ARTICULO.Precio, 
+            ART_VENDIDO.Cantidad, ART_VENDIDO.Monto, 
+            VENTA.Total
+		FROM VENTA
+			INNER JOIN (ART_VENDIDO
+			INNER JOIN ARTICULO USING (CodigoArt))
+			USING (NroRecibo)
+		WHERE VENTA.NroRecibo = recibo;
+    END //
+DELIMITER ;
 
+CALL reciboVenta('5');
 
-/*CONSULTA N°3*/
-
-
-/*CONSULTA N°4*/
--- Borrar y recuperar registros de los articulos de la base de datos.
+/* N°2 */
+/* Borrar y recuperar registros de los articulos de la base de datos */
 DELETE FROM ARTICULO WHERE codigoArt = 12;
 
 DELIMITER //
@@ -77,8 +102,8 @@ DELIMITER ;
 
 CALL recuperarArticulo (12);
 
-/*CONSULTA N°5*/
--- Muestra los saldos de los clientes y de los proveedores.
+/* N°3 */
+/* Muestra los saldos de los clientes y de los proveedores */
 DELIMITER //
 CREATE VIEW `CUENTA_CLIENTE` AS
 	SELECT CLIENTE.*, CUENTA_CORRIENTE.SALDO FROM CLIENTE INNER JOIN CUENTA_CORRIENTE USING(NroCuenta)
@@ -92,8 +117,8 @@ CREATE VIEW `CUENTA_PROVEEDOR` AS
 SELECT * FROM CUENTA_CLIENTE;
 SELECT * FROM CUENTA_PROVEEDOR;
 
-/*CONSULTA N°6*/
--- Registrar un pago, lo que disminuye el saldo de las cta cte. Puede ser un pago nuestro a los proveedores o uno de los clientes hacia nosotros.
+/* N°4 */
+/* Registrar un pago, lo que disminuye el saldo de las cta cte. Puede ser un pago nuestro a los proveedores o uno de los clientes hacia nosotros */
 DELIMITER //
 CREATE PROCEDURE `CtaCtePago`(IN cuenta INT, IN monto FLOAT)
 	BEGIN
@@ -103,10 +128,12 @@ CREATE PROCEDURE `CtaCtePago`(IN cuenta INT, IN monto FLOAT)
 	END //
 DELIMITER ;
 
+SELECT * FROM CUENTA_PROVEEDOR;
 CALL CtaCtePago(3, 3500);
+SELECT * FROM CUENTA_PROVEEDOR;
 
-/*CONSULTA N°7*/
--- Muestra la deuda total que tenemos con los proveedores
+/* N°5 */
+/* Muestra la deuda total que tenemos con los proveedores */
 DELIMITER //
 CREATE VIEW `DEUDAS` AS
 	SELECT SUM(SALDO) AS 'Deuda Total' FROM CUENTA_CORRIENTE WHERE tipo = 'proveedor';
@@ -114,8 +141,8 @@ CREATE VIEW `DEUDAS` AS
 
 SELECT * FROM DEUDAS;
 
-/*CONSULTA N°8*/
--- Muestra las ventas realizadas por todos los vendedores.
+/* N°6 */
+/* Muestra las ventas realizadas por todos los vendedores */
 DELIMITER //
 CREATE VIEW `VENTASDEUSUARIO` AS
 	SELECT EMPLEADO.Apellido, EMPLEADO.Nombre, VENTA.Fecha, VENTA.Hora, VENTA.NroRecibo

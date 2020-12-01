@@ -2,8 +2,11 @@
 -- Generated: 2020-11-29 19:56
 -- Model: New Model
 -- Version: 1.0
--- Project: Name of the project
--- Author: danie
+-- Project: TFI Maxikiosko
+-- Author: QuVitSoft
+-- Integrantes:
+-- - Quevedo, Franco
+-- - Vitian, Jorge Ivan
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -307,7 +310,6 @@ CREATE TABLE IF NOT EXISTS `maxikiosco`.`ARTICULO_HISTORIAL` (
   INDEX `fk_ARTICULO_HISTORIAL_ARTICULO1_idx` (`CodigoArt` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
-
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
