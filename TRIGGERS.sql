@@ -29,6 +29,8 @@ FOR EACH ROW
         FROM ARTICULO 
         WHERE codigoArt = NEW.codigoArt;
         
+		SET NEW.monto = (NEW.cantidad * @precio);
+        
         IF (NEW.cantidad > @stock)
         THEN
 			SET NEW.cantidad = @stock;
@@ -38,30 +40,62 @@ FOR EACH ROW
         SET stockActual = (@stock - NEW.cantidad)
         WHERE codigoArt = NEW.codigoArt;
         
-		SET NEW.monto = (NEW.cantidad * @precio);
-        
         UPDATE VENTA
         SET total = (total + NEW.monto)
         WHERE nroRecibo = NEW.nroRecibo;
-	END // 
+		
+	END //
 DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER `insercionLleva`
+AFTER INSERT ON LLEVA
+FOR EACH ROW
+	BEGIN
+		SELECT total into @total
+        FROM VENTA
+        WHERE NroRecibo = NEW.NroRecibo;
+        
+		UPDATE CUENTA_CORRIENTE
+        SET saldo = (saldo + @total)
+        WHERE NroCuenta = NEW.NroCuenta AND tipo = 'cliente'; # La segunda parte es para que salte un error si la cuenta no es de un cliente
+	END //
+DELIMITER ;
+
+# DROP TRIGGER insercionLleva;
 
 DELIMITER //
 CREATE TRIGGER `producto_ingresa`
 BEFORE INSERT ON INGRESA
 FOR EACH ROW
 	BEGIN
-		SELECT stockActual INTO @stock
+		SET @costoInd = NEW.costo / NEW.cantidad;
+		SELECT stockActual, CONCAT(nombre, ' ', marca) INTO @stock, @producto
 		FROM ARTICULO
 		WHERE codigoArt = NEW.codigoArt;
+        SELECT NroCuenta INTO @Cta
+        FROM COMPRA
+        WHERE ID = NEW.ID;
 
 		UPDATE ARTICULO
 		SET stockActual = (@stock + NEW.cantidad),
-			costo = (NEW.costo / NEW.cantidad),
-			IVA = (NEW.costo / NEW.cantidad)*0.21
+			costo = (@costoInd),
+			IVA = (@costoInd*0.21),
+            precio = round(@costoInd * 1.5)
 		WHERE codigoArt = NEW.codigoArt;
+        
+        UPDATE COMPRA
+        SET totalCompra = totalCompra + NEW.costo,
+			remito = CONCAT(remito, @producto, 'x', NEW.cantidad, ' a ', NEW.costo, ', ')
+        WHERE ID = NEW.ID;
+        
+        UPDATE CUENTA_CORRIENTE
+        SET Saldo = (Saldo + NEW.costo)
+		WHERE NroCuenta = @Cta AND tipo = 'proveedor';
 	END //
 DELIMITER ;
+
+#DROP TRIGGER producto_ingresa;
 
 DELIMITER //
 CREATE TRIGGER `borrado_articulo`
@@ -74,5 +108,3 @@ FOR EACH ROW
         OLD.descripcion, CURDATE(), CURTIME(), USER());
 	END //
 DELIMITER ;
-
-DROP TRIGGER borrado_articulo;
